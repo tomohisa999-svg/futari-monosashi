@@ -4,6 +4,8 @@
   let themeId = "sumai";
   let questions = themes[themeId].questions;
   let received = null;
+  let resultData = null;
+  let resultScore = 0;
   let copyTimer = null;
   const el = (id) => document.getElementById(id);
   // 回答はページを開いている間だけメモリに保持する。
@@ -50,11 +52,9 @@
       if (current < questions.length - 1) { current += 1; render(); }
       else {
         if (received) {
-          el("result-name1").textContent = received.n1 || "1人目";
-          el("result-name2").textContent = nickname("name2") || "2人目";
-          el("result-answers1").textContent = JSON.stringify(Array.from(received.a1, Number));
-          el("result-answers2").textContent = JSON.stringify(answers);
-          show("result", "result-title");
+          renderResult({ v: 1, t: themeId, n1: received.n1, a1: received.a1,
+            n2: nickname("name2"), a2: answers.join("") });
+          window.history.replaceState(null, "", resultUrl());
         } else {
           const name = nickname("name1");
           el("done-greeting").textContent = name ? `${name}さん、おつかれさまでした` : "10問、おつかれさまでした";
@@ -65,7 +65,7 @@
   }
   function nickname(id) { return el(id).value.trim().slice(0, 10); }
   function home() {
-    cancel(); received = null; answers = []; current = 0;
+    cancel(); received = null; resultData = null; answers = []; current = 0;
     themeId = "sumai"; questions = themes[themeId].questions;
     if (window.location.hash) window.history.replaceState(null, "", window.location.pathname + window.location.search);
     el("name1").value = ""; el("name2").value = "";
@@ -74,15 +74,77 @@
   function begin() { answers = []; current = 0; render(); }
   function shareUrl() {
     const data = { v: 1, t: themeId, n1: nickname("name1"), a1: answers.join("") };
+    return encodedUrl(data, "p");
+  }
+  function encodedUrl(data, kind) {
     const bytes = new TextEncoder().encode(JSON.stringify(data));
     const encoded = btoa(Array.from(bytes, (byte) => String.fromCharCode(byte)).join(""))
       .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-    return window.location.origin + window.location.pathname + "#p=" + encoded;
+    return window.location.origin + window.location.pathname + "#" + kind + "=" + encoded;
+  }
+  function resultUrl() { return encodedUrl(resultData, "r"); }
+  function node(tag, className, content) {
+    const element = document.createElement(tag);
+    element.className = className;
+    if (content !== undefined) element.textContent = content;
+    return element;
+  }
+  function renderResult(data) {
+    resultData = data;
+    const names = [data.n1 || "1人目", data.n2 || "2人目"];
+    const rows = questions.map((question, i) => ({ question, a: Number(data.a1[i]), b: Number(data.a2[i]),
+      difference: Math.abs(Number(data.a1[i]) - Number(data.a2[i])) }));
+    resultScore = Math.round(rows.reduce((sum, row) => sum + [100, 75, 35, 0][row.difference], 0) / rows.length);
+    el("result-names").textContent = names.join(" と ");
+    el("result-score").textContent = `${resultScore}%`;
+    el("result-message").textContent = resultScore >= 80 ? "かなり近い考えのふたりです" : resultScore >= 60 ?
+      "だいたい同じ方向。いくつか話しておきたいところがあります" : resultScore >= 40 ?
+      "考えがちがうところがはっきりしています。話し合うよい機会に" :
+      "見ている景色がけっこうちがうふたり。まずは1つずつ話してみましょう";
+    const groups = [
+      { title: "もめそうなところ", label: "もめそう", className: "conflict", rows: rows.filter(row => row.difference === 3) },
+      { title: "ちょっとズレ", label: "ちょっとズレ", className: "different", rows: rows.filter(row => row.difference === 2) },
+      { title: "合っているところ", label: "合っている", className: "close", rows: rows.filter(row => row.difference <= 1) }
+    ];
+    el("result-counts").replaceChildren(...[groups[2], groups[1], groups[0]].map(group =>
+      node("p", group.className, `${group.label} ${group.rows.length}問`)));
+    el("result-groups").replaceChildren();
+    groups.forEach((group, index) => {
+      if (index === 0 && !group.rows.length) {
+        el("result-groups").append(node("p", "no-conflict", "もめそうなところはありませんでした"));
+        return;
+      }
+      if (!group.rows.length) return;
+      const section = node("section", `result-group ${group.className}`);
+      section.append(node("h3", "group-title", `${group.title}（${group.rows.length}問）`));
+      if (index === 0) {
+        section.append(node("p", "hint", "上から順に話すのがおすすめ"));
+        group.rows.sort((a, b) => a.question.talkOrder - b.question.talkOrder);
+      }
+      group.rows.forEach(({ question, a, b }) => {
+        const card = node("article", "result-card");
+        card.append(node("h4", "", question.text));
+        const choices = node("div", "result-choices");
+        if (index === 2 && a === b) choices.append(node("p", "both-answer", `ふたりとも：${question.options[a]}`));
+        else [a, b].forEach((answer, person) => choices.append(node("p", "", `${names[person]}：${question.options[answer]}`)));
+        card.append(choices);
+        if (index !== 2) {
+          const advice = node(index === 0 ? "div" : "details", "result-advice");
+          advice.append(node(index === 0 ? "p" : "summary", "advice-title", "歩み寄るなら"), node("p", "", question.advice));
+          card.append(advice);
+        }
+        section.append(card);
+      });
+      el("result-groups").append(section);
+    });
+    show("result", "result-title");
   }
   function resetCopy() {
     window.clearTimeout(copyTimer);
     el("copy-status").textContent = ""; el("manual-copy").hidden = true;
     el("share-url").value = "";
+    el("result-copy-status").textContent = ""; el("result-manual-copy").hidden = true;
+    el("result-share-url").value = "";
   }
   function receive() {
     el("receive-title").textContent = received.n1 ? `${received.n1}さんから届きました` : "ふたりものさしが届きました";
@@ -90,12 +152,12 @@
     show("receive", "receive-title");
   }
   function readLink() {
-    cancel(); resetCopy(); answers = []; current = 0; received = null;
+    cancel(); resetCopy(); answers = []; current = 0; received = null; resultData = null;
     if (!window.location.hash) { home(); return; }
     try {
-      const match = /^#p=([A-Za-z0-9_-]+)$/.exec(window.location.hash);
-      if (!match || match[1].length > 4096) throw new Error("Invalid link");
-      const base64 = match[1].replace(/-/g, "+").replace(/_/g, "/");
+      const match = /^#([pr])=([A-Za-z0-9_-]+)$/.exec(window.location.hash);
+      if (!match || match[2].length > 4096) throw new Error("Invalid link");
+      const base64 = match[2].replace(/-/g, "+").replace(/_/g, "/");
       const bytes = Uint8Array.from(atob(base64), (char) => char.charCodeAt(0));
       const data = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
       if (!data || data.v !== 1 || !Object.hasOwn(themes, data.t) || typeof data.n1 !== "string" || data.n1.length > 10 ||
@@ -103,7 +165,11 @@
         throw new Error("Invalid data");
       }
       received = data; themeId = data.t; questions = themes[themeId].questions;
-      receive();
+      if (match[1] === "r") {
+        if (typeof data.n2 !== "string" || data.n2.length > 10 || typeof data.a2 !== "string" ||
+            !/^[0-3]+$/.test(data.a2) || data.a2.length !== questions.length) throw new Error("Invalid result");
+        renderResult(data);
+      } else receive();
     } catch { show("invalid", "invalid-title"); }
   }
   function introduce() { show("introduce", "introduce-title"); }
@@ -119,6 +185,12 @@
   el("home-button").addEventListener("click", home);
   el("fresh-start").addEventListener("click", home);
   el("invalid-home").addEventListener("click", home);
+  el("result-home").addEventListener("click", home);
+  el("result-line").addEventListener("click", () => {
+    const message = `ふたりものさし（住まい）の結果が出たよ！ぴったり度は${resultScore}%。\n${resultUrl()}`;
+    window.open("https://line.me/R/share?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
+  });
+  el("result-copy").addEventListener("click", () => copyLink(true));
   el("receive-start").addEventListener("click", begin);
   el("name1").addEventListener("input", resetCopy);
   el("line-share").addEventListener("click", () => {
@@ -127,25 +199,29 @@
       "あなたも答えてみて！答えると、ふたりの結果が見られます。\n" + shareUrl();
     window.open("https://line.me/R/share?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
   });
-  el("copy-link").addEventListener("click", async () => {
+  async function copyLink(isResult = false) {
     resetCopy();
-    const url = shareUrl();
+    const url = isResult ? resultUrl() : shareUrl();
+    const input = el(isResult ? "result-share-url" : "share-url");
+    const manual = el(isResult ? "result-manual-copy" : "manual-copy");
+    const status = el(isResult ? "result-copy-status" : "copy-status");
     let copied = false;
     try { await navigator.clipboard.writeText(url); copied = true; } catch { /* 従来のコピー方法へ */ }
     if (!copied) {
-      el("manual-copy").hidden = false;
-      el("share-url").value = url;
-      el("share-url").focus(); el("share-url").select();
-      el("share-url").setSelectionRange(0, url.length);
+      manual.hidden = false;
+      input.value = url;
+      input.focus(); input.select();
+      input.setSelectionRange(0, url.length);
       try { copied = document.execCommand("copy"); } catch { /* 手動でコピーできる入力欄を残す */ }
     }
     if (copied) {
-      el("manual-copy").hidden = true;
-      el("copy-link").focus();
-      el("copy-status").textContent = "コピーしました";
-      copyTimer = window.setTimeout(() => { el("copy-status").textContent = ""; }, 2400);
-    } else { el("copy-status").textContent = "リンクを長押し、または選択してコピーしてください。"; }
-  });
+      manual.hidden = true;
+      el(isResult ? "result-copy" : "copy-link").focus();
+      status.textContent = "コピーしました";
+      copyTimer = window.setTimeout(() => { status.textContent = ""; }, 2400);
+    } else { status.textContent = "リンクを長押し、または選択してコピーしてください。"; }
+  }
+  el("copy-link").addEventListener("click", () => copyLink());
   window.addEventListener("hashchange", readLink);
   if (window.location.hash) readLink();
 })();
