@@ -4,17 +4,48 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ふたりものさし</title>
-<style>
-body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:"Hiragino Sans","Yu Gothic",sans-serif;background:#faf7f2;color:#333;padding:16px;box-sizing:border-box}
-.box{text-align:center}
-h1{font-size:28px;margin:0 0 8px}
-p{margin:0;color:#777}
-</style>
+<link rel="stylesheet" href="style.css">
+<script src="questions/sumai.js" defer></script>
+<script src="app.js" defer></script>
 </head>
 <body>
-<div class="box">
-<h1>ふたりものさし</h1>
-<p>ただいま準備中です</p>
+<main class="app">
+<section id="home" aria-labelledby="title">
+<div class="ruler" aria-hidden="true"></div>
+<p class="eyebrow">ふたりの違いを、話すきっかけに。</p>
+<h1 id="title" tabindex="-1">ふたりものさし</h1>
+<p class="intro">ふたりで別々に答えると、意見が合うところ・もめそうなところが分かります。</p>
+<ol class="steps"><li>自分が答える</li><li>リンクを相手に送る</li><li>相手が答えると結果が出る</li></ol>
+<h2 class="theme-title">どのテーマで話してみる？</h2>
+<p class="hint">約1〜2分・全10問</p>
+<div class="themes">
+<button id="start" class="primary" type="button">住まい <span aria-hidden="true">→</span></button>
+<button type="button" disabled>お金の考え方 <small>準備中</small></button>
+<button type="button" disabled>子育て <small>準備中</small></button>
+<button type="button" disabled>旅行の計画 <small>準備中</small></button>
 </div>
+<p class="privacy">答えはどこにも保存されません</p>
+</section>
+<section id="quiz" aria-labelledby="question" hidden>
+<div class="top"><span class="topic">住まい</span><span id="count"></span></div>
+<div id="progress" class="progress" role="progressbar" aria-label="質問の進み具合" aria-valuemin="0" aria-valuemax="10"><span id="fill"></span></div>
+<p class="question-hint">いまの気持ちに近いものを、ひとつ。</p>
+<h2 id="question" tabindex="-1"></h2>
+<div id="options" class="options" role="group" aria-labelledby="question"></div>
+<button id="back" class="text-button" type="button"></button>
+<p class="hint">正解はありません。気軽に選んでください。</p>
+</section>
+<section id="done" aria-labelledby="done-title" hidden>
+<div class="ruler" aria-hidden="true"></div>
+<p class="eyebrow">10問、おつかれさまでした</p>
+<h2 id="done-title" tabindex="-1">ここで相手に送る画面になります（準備中）</h2>
+<p class="intro">相手へのリンク送信と結果の表示は、これから追加されます。</p>
+<div class="preview"><p>今回の回答（選択肢番号 0〜3）</p><code id="answers"></code></div>
+<button id="review" class="text-button" type="button">最後の質問に戻る</button>
+<button id="home-button" class="text-button" type="button">テーマ選びに戻る</button>
+<p class="privacy">答えはどこにも保存されません<br>ページを閉じたり再読み込みすると消えます。</p>
+</section>
+<noscript>このアプリを使うにはJavaScriptを有効にしてください。</noscript>
+</main>
 </body>
 </html>
