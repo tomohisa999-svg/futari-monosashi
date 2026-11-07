@@ -50,3 +50,5 @@ small { flex-shrink: 0; font-size: 11px; padding: 2px 8px; border-radius: 20px; 
 #result-name2 { margin-top: 16px; }
 @media (max-width: 460px) { body { padding: 20px 16px; } .app { padding: 24px 16px; border-radius: 20px; } }
 @media (prefers-reduced-motion: reduce) { .progress span { transition: none; } }
+
+.nb{display:inline-block}
