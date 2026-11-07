@@ -26,6 +26,15 @@
 </div>
 <p class="privacy">答えはどこにも保存されません</p>
 </section>
+<section id="introduce" aria-labelledby="introduce-title" hidden>
+<div class="ruler" aria-hidden="true"></div>
+<h2 id="introduce-title" tabindex="-1">はじめに、呼び名を教えてください</h2>
+<p class="intro">相手に届くメッセージと、ふたりの結果に表示されます。空欄でも大丈夫です（空欄なら「1人目」と表示）。</p>
+<label class="name-label" for="name1">あなたの呼び名（ニックネーム）</label>
+<input id="name1" class="name-input" type="text" maxlength="10" placeholder="例：けんた" autocomplete="off">
+<button id="introduce-start" class="action-button start-answer" type="button">答えはじめる</button>
+<button id="introduce-home" class="text-button" type="button">テーマ選びに戻る</button>
+</section>
 <section id="quiz" aria-labelledby="question" hidden>
 <div class="top"><span class="topic">住まい</span><span id="count"></span></div>
 <div id="progress" class="progress" role="progressbar" aria-label="質問の進み具合" aria-valuemin="0" aria-valuemax="10"><span id="fill"></span></div>
@@ -37,11 +46,9 @@
 </section>
 <section id="done" aria-labelledby="done-title" hidden>
 <div class="ruler" aria-hidden="true"></div>
-<p class="eyebrow">10問、おつかれさまでした</p>
+<p id="done-greeting" class="eyebrow">10問、おつかれさまでした</p>
 <h2 id="done-title" tabindex="-1">次は相手の番です</h2>
 <p class="intro">リンクを送って、相手にも同じ10問に答えてもらいましょう。答えると、ふたりの結果が見られます。</p>
-<label class="name-label" for="name1">あなたの呼び名（ニックネーム）</label>
-<input id="name1" class="name-input" type="text" maxlength="10" placeholder="例：けんた" autocomplete="off">
 <div class="actions">
 <button id="line-share" class="action-button line-button" type="button">LINEで送る</button>
 <button id="copy-link" class="action-button" type="button">リンクをコピー</button>

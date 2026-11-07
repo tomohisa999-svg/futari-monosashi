@@ -12,7 +12,7 @@
   let timer = null;
   function cancel() { window.clearTimeout(timer); timer = null; }
   function show(screen, title) {
-    ["home", "quiz", "done", "receive", "result", "invalid"].forEach((id) => { el(id).hidden = id !== screen; });
+    ["home", "introduce", "quiz", "done", "receive", "result", "invalid"].forEach((id) => { el(id).hidden = id !== screen; });
     el(title).focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }
@@ -25,7 +25,7 @@
     document.querySelector(".topic").textContent = themes[themeId].name;
     el("fill").style.width = `${(current + 1) / questions.length * 100}%`;
     el("question").textContent = question.text;
-    el("back").textContent = current === 0 ? (received ? "受け取り画面に戻る" : "テーマ選びに戻る") : "ひとつ前に戻る";
+    el("back").textContent = current === 0 ? (received ? "受け取り画面に戻る" : "呼び名の入力に戻る") : "ひとつ前に戻る";
     el("options").replaceChildren();
     question.options.forEach((label, index) => {
       const button = document.createElement("button");
@@ -55,7 +55,11 @@
           el("result-answers1").textContent = JSON.stringify(Array.from(received.a1, Number));
           el("result-answers2").textContent = JSON.stringify(answers);
           show("result", "result-title");
-        } else { show("done", "done-title"); }
+        } else {
+          const name = nickname("name1");
+          el("done-greeting").textContent = name ? `${name}さん、おつかれさまでした` : "10問、おつかれさまでした";
+          show("done", "done-title");
+        }
       }
     }, 320);
   }
@@ -102,10 +106,13 @@
       receive();
     } catch { show("invalid", "invalid-title"); }
   }
-  el("start").addEventListener("click", begin);
+  function introduce() { show("introduce", "introduce-title"); }
+  el("start").addEventListener("click", introduce);
+  el("introduce-start").addEventListener("click", begin);
+  el("introduce-home").addEventListener("click", home);
   el("back").addEventListener("click", () => {
     cancel();
-    if (current === 0) { if (received) receive(); else home(); }
+    if (current === 0) { if (received) receive(); else introduce(); }
     else { current -= 1; render(); }
   });
   el("review").addEventListener("click", () => { resetCopy(); current = 0; render(); });
