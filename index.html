@@ -38,12 +38,36 @@
 <section id="done" aria-labelledby="done-title" hidden>
 <div class="ruler" aria-hidden="true"></div>
 <p class="eyebrow">10問、おつかれさまでした</p>
-<h2 id="done-title" tabindex="-1">ここで相手に送る画面になります（準備中）</h2>
-<p class="intro">相手へのリンク送信と結果の表示は、これから追加されます。</p>
-<div class="preview"><p>今回の回答（選択肢番号 0〜3）</p><code id="answers"></code></div>
-<button id="review" class="text-button" type="button">最後の質問に戻る</button>
+<h2 id="done-title" tabindex="-1">次は相手の番です</h2>
+<p class="intro">リンクを送って、相手にも同じ10問に答えてもらいましょう。答えると、ふたりの結果が見られます。</p>
+<label class="name-label" for="name1">あなたの呼び名（ニックネーム）</label>
+<input id="name1" class="name-input" type="text" maxlength="10" placeholder="例：けんた" autocomplete="off">
+<div class="actions">
+<button id="line-share" class="action-button line-button" type="button">LINEで送る</button>
+<button id="copy-link" class="action-button" type="button">リンクをコピー</button>
+</div>
+<p id="copy-status" class="hint status" role="status"></p>
+<div id="manual-copy" hidden><label class="name-label" for="share-url">リンクを選択してコピーしてください</label><input id="share-url" class="name-input" type="text" readonly></div>
+<button id="review" class="text-button" type="button">答えをやり直す</button>
 <button id="home-button" class="text-button" type="button">テーマ選びに戻る</button>
 <p class="privacy">答えはどこにも保存されません<br>ページを閉じたり再読み込みすると消えます。</p>
+</section>
+<section id="receive" aria-labelledby="receive-title" hidden>
+<div class="ruler" aria-hidden="true"></div>
+<h2 id="receive-title" tabindex="-1"></h2>
+<p id="receive-description" class="intro"></p>
+<label class="name-label" for="name2">あなたの呼び名（ニックネーム）</label>
+<input id="name2" class="name-input" type="text" maxlength="10" placeholder="例：けんた" autocomplete="off">
+<button id="receive-start" class="action-button start-answer" type="button">答えはじめる</button>
+<button id="fresh-start" class="text-button" type="button">自分も最初から始める</button>
+</section>
+<section id="result" aria-labelledby="result-title" hidden>
+<h2 id="result-title" tabindex="-1">結果の画面（準備中）</h2>
+<div class="preview"><p id="result-name1"></p><code id="result-answers1"></code><p id="result-name2"></p><code id="result-answers2"></code></div>
+</section>
+<section id="invalid" aria-labelledby="invalid-title" hidden>
+<h2 id="invalid-title" tabindex="-1">リンクが正しくないようです</h2>
+<button id="invalid-home" class="action-button start-answer" type="button">はじめの画面に戻る</button>
 </section>
 <noscript>このアプリを使うにはJavaScriptを有効にしてください。</noscript>
 </main>

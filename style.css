@@ -39,5 +39,14 @@ small { flex-shrink: 0; font-size: 11px; padding: 2px 8px; border-radius: 20px; 
 .text-button { display: block; min-height: 48px; padding: 8px 2px; margin: 20px 0 16px; border: 0; color: #53725a; background: transparent; text-decoration: underline; text-underline-offset: 5px; text-align: left; }
 .preview { margin-top: 28px; padding: 16px; background: #f3f5ee; border-radius: 12px; font-size: 12px; color: var(--muted); }
 .preview code { display: block; margin-top: 6px; overflow-wrap: anywhere; font-size: 13px; }
+.name-label { display: block; margin-top: 24px; font-size: 14px; }
+.name-input { display: block; width: 100%; min-width: 0; min-height: 52px; margin-top: 8px; padding: 12px; border: 1px solid #d8dfd1; border-radius: 12px; background: #fffdf9; color: var(--ink); font: inherit; font-size: 16px; }
+.name-input:focus-visible { outline: 3px solid #355e41; outline-offset: 2px; }
+.actions { display: grid; gap: 12px; margin-top: 24px; }
+.action-button { width: 100%; min-height: 60px; padding: 14px 12px; border: 1px solid #d8dfd1; border-radius: 12px; background: #f3f5ee; color: #36563e; }
+.line-button { background: #06C755; border-color: #06C755; color: white; }
+.start-answer { margin-top: 24px; background: var(--green); border-color: var(--green); color: white; }
+.status { min-height: 24px; margin-top: 8px; }
+#result-name2 { margin-top: 16px; }
 @media (max-width: 460px) { body { padding: 20px 16px; } .app { padding: 24px 16px; border-radius: 20px; } }
 @media (prefers-reduced-motion: reduce) { .progress span { transition: none; } }
