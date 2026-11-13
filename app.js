@@ -196,7 +196,9 @@
   el("invalid-home").addEventListener("click", home);
   el("result-home").addEventListener("click", home);
   function sendResultLine() {
-    const message = `ふたりものさし（${themes[themeId].name}）の結果が出たよ！ぴったり度は${resultScore}%。\n${resultUrl()}`;
+    const conflicts = questions.filter((_, i) => Math.abs(Number(resultData.a1[i]) - Number(resultData.a2[i])) === 3).length;
+    const message = `${resultData.n2 ? resultData.n2 + "も" : ""}「ふたりものさし（${themes[themeId].name}）」に答えたよ！\n` +
+      (conflicts ? "ちょっと話し合いたいところが見つかったよ…結果を見てみて。" : "けっこう合ってたかも。結果を見てみて。") + `\n${resultUrl()}`;
     window.open("https://line.me/R/share?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
   }
   el("result-line").addEventListener("click", sendResultLine);
