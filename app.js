@@ -4,7 +4,11 @@
     sumai: { name: "住まい", short: "住まい", questions: window.sumaiQuestions },
     okane: { name: "お金の考え方", short: "お金", questions: window.okaneQuestions },
     kosodate: { name: "子育て", short: "子育て", questions: window.kosodateQuestions },
-    ryokou: { name: "旅行の計画", short: "旅行", questions: window.ryokouQuestions }
+    ryokou: { name: "旅行の計画", short: "旅行", questions: window.ryokouQuestions },
+    kaji: { name: "家事の分担", short: "家事", questions: window.kajiQuestions },
+    kyujitsu: { name: "休日の過ごし方", short: "休日", questions: window.kyujitsuQuestions },
+    shourai: { name: "将来・老後", short: "将来", questions: window.shouraiQuestions },
+    kodawari: { name: "暮らしのこだわり", short: "こだわり", questions: window.kodawariQuestions }
   };
   let themeId = "sumai";
   let questions = themes[themeId].questions;
