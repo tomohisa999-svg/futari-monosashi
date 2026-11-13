@@ -56,7 +56,7 @@
       else {
         if (received) {
           renderResult({ v: 1, t: themeId, n1: received.n1, a1: received.a1,
-            n2: nickname("name2"), a2: answers.join("") });
+            n2: nickname("name2"), a2: answers.join("") }, true);
           window.history.replaceState(null, "", resultUrl());
         } else {
           const name = nickname("name1");
@@ -92,9 +92,11 @@
     if (content !== undefined) element.textContent = content;
     return element;
   }
-  function renderResult(data) {
+  function renderResult(data, justAnswered = false) {
     resultData = data;
     const names = [data.n1 || "1人目", data.n2 || "2人目"];
+    el("send-back").hidden = !justAnswered;
+    el("send-back-text").textContent = `${data.n1 ? data.n1 + "さん" : "相手"}は、まだこの結果を見ていません。結果を送ってあげましょう。`;
     const rows = questions.map((question, i) => ({ question, a: Number(data.a1[i]), b: Number(data.a2[i]),
       difference: Math.abs(Number(data.a1[i]) - Number(data.a2[i])) }));
     resultScore = Math.round(rows.reduce((sum, row) => sum + [100, 75, 35, 0][row.difference], 0) / rows.length);
@@ -191,10 +193,12 @@
   el("fresh-start").addEventListener("click", home);
   el("invalid-home").addEventListener("click", home);
   el("result-home").addEventListener("click", home);
-  el("result-line").addEventListener("click", () => {
+  function sendResultLine() {
     const message = `ふたりものさし（${themes[themeId].name}）の結果が出たよ！ぴったり度は${resultScore}%。\n${resultUrl()}`;
     window.open("https://line.me/R/share?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
-  });
+  }
+  el("result-line").addEventListener("click", sendResultLine);
+  el("send-back-line").addEventListener("click", sendResultLine);
   el("result-copy").addEventListener("click", () => copyLink(true));
   el("receive-start").addEventListener("click", begin);
   el("name1").addEventListener("input", resetCopy);
