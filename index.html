@@ -6,6 +6,7 @@
 <title>ふたりものさし</title>
 <link rel="stylesheet" href="style.css">
 <script src="questions/sumai.js" defer></script>
+<script src="questions/okane.js" defer></script>
 <script src="app.js" defer></script>
 </head>
 <body>
@@ -19,8 +20,8 @@
 <h2 class="theme-title">どのテーマで話してみる？</h2>
 <p class="hint">約1〜2分・全10問</p>
 <div class="themes">
-<button id="start" class="primary" type="button">住まい <span aria-hidden="true">→</span></button>
-<button type="button" disabled>お金の考え方 <small>準備中</small></button>
+<button class="primary" type="button" data-theme="sumai">住まい <span aria-hidden="true">→</span></button>
+<button class="primary" type="button" data-theme="okane">お金の考え方 <span aria-hidden="true">→</span></button>
 <button type="button" disabled>子育て <small>準備中</small></button>
 <button type="button" disabled>旅行の計画 <small>準備中</small></button>
 </div>

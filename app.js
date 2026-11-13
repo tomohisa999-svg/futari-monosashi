@@ -1,6 +1,9 @@
 "use strict";
 (() => {
-  const themes = { sumai: { name: "住まい", questions: window.sumaiQuestions } };
+  const themes = {
+    sumai: { name: "住まい", short: "住まい", questions: window.sumaiQuestions },
+    okane: { name: "お金の考え方", short: "お金", questions: window.okaneQuestions }
+  };
   let themeId = "sumai";
   let questions = themes[themeId].questions;
   let received = null;
@@ -101,6 +104,7 @@
       "だいたい同じ方向。いくつか話しておきたいところがあります" : resultScore >= 40 ?
       "考えがちがうところがはっきりしています。話し合うよい機会に" :
       "見ている景色がけっこうちがうふたり。まずは1つずつ話してみましょう";
+    el("result-title").textContent = `ふたりの${themes[themeId].short}のものさし`;
     const groups = [
       { title: "もめそうなところ", label: "もめそう", className: "conflict", rows: rows.filter(row => row.difference === 3) },
       { title: "ちょっとズレ", label: "ちょっとズレ", className: "different", rows: rows.filter(row => row.difference === 2) },
@@ -173,7 +177,8 @@
     } catch { show("invalid", "invalid-title"); }
   }
   function introduce() { show("introduce", "introduce-title"); }
-  el("start").addEventListener("click", introduce);
+  function pickTheme(id) { themeId = id; questions = themes[themeId].questions; introduce(); }
+  document.querySelectorAll("[data-theme]").forEach((button) => button.addEventListener("click", () => pickTheme(button.dataset.theme)));
   el("introduce-start").addEventListener("click", begin);
   el("introduce-home").addEventListener("click", home);
   el("back").addEventListener("click", () => {
@@ -187,7 +192,7 @@
   el("invalid-home").addEventListener("click", home);
   el("result-home").addEventListener("click", home);
   el("result-line").addEventListener("click", () => {
-    const message = `ふたりものさし（住まい）の結果が出たよ！ぴったり度は${resultScore}%。\n${resultUrl()}`;
+    const message = `ふたりものさし（${themes[themeId].name}）の結果が出たよ！ぴったり度は${resultScore}%。\n${resultUrl()}`;
     window.open("https://line.me/R/share?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
   });
   el("result-copy").addEventListener("click", () => copyLink(true));
@@ -195,7 +200,7 @@
   el("name1").addEventListener("input", resetCopy);
   el("line-share").addEventListener("click", () => {
     const name = nickname("name1");
-    const message = (name ? `${name}さんが「ふたりものさし（住まい）」に答えました。` : "ふたりものさし（住まい）に答えたよ。") +
+    const message = (name ? `${name}さんが「ふたりものさし（${themes[themeId].name}）」に答えました。` : `ふたりものさし（${themes[themeId].name}）に答えたよ。`) +
       "あなたも答えてみて！答えると、ふたりの結果が見られます。\n" + shareUrl();
     window.open("https://line.me/R/share?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
   });
