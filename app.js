@@ -2,7 +2,9 @@
 (() => {
   const themes = {
     sumai: { name: "住まい", short: "住まい", questions: window.sumaiQuestions },
-    okane: { name: "お金の考え方", short: "お金", questions: window.okaneQuestions }
+    okane: { name: "お金の考え方", short: "お金", questions: window.okaneQuestions },
+    kosodate: { name: "子育て", short: "子育て", questions: window.kosodateQuestions },
+    ryokou: { name: "旅行の計画", short: "旅行", questions: window.ryokouQuestions }
   };
   let themeId = "sumai";
   let questions = themes[themeId].questions;
